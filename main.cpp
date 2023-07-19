@@ -35,10 +35,22 @@ int main() {
 
 	string outputWindowName = "Output";
 	cv::namedWindow(outputWindowName);
+	int trackbarPos = 128;
+	cv::createTrackbar("thresholdTrackbar", outputWindowName, &trackbarPos, 255);
+
+	cout << "Test";
 	
 	while (capture.read(frame)) {
 		if (cv::waitKey(25) == 27 || !cv::getWindowProperty(outputWindowName, cv::WND_PROP_VISIBLE))
 			break;
+
+		cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
+
+		if (trackbarPos == 0)
+			cv::adaptiveThreshold(frame, frame, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 33, 5);
+
+		else
+			cv::threshold(frame, frame, trackbarPos, 255, cv::THRESH_BINARY);
 
 		cv::imshow("Output", frame);
 	}
